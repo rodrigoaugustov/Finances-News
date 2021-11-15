@@ -1,9 +1,8 @@
-from finances.entities.news import New
 import scrapy
 import re
 from datetime import datetime
 from finances.entities.news import New
-from finances.services.crud import create_session
+from src.services import create_session
 
 
 class InvestingSpider(scrapy.Spider):

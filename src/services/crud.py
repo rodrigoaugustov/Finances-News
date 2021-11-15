@@ -1,10 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
-from finances.services import DATABASE_URI
-
-from finances.entities.news import New, Base
-
+from src.services import DATABASE_URI
 
 engine = create_engine(DATABASE_URI)
 Session = sessionmaker(bind=engine)

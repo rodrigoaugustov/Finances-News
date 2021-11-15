@@ -1,4 +1,4 @@
-# Scrapy settings for finances project
+# Scrapy settings for scrapper project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -7,15 +7,15 @@
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'finances'
+BOT_NAME = 'scrapper'
 
-SPIDER_MODULES = ['finances.spiders']
-NEWSPIDER_MODULE = 'finances.spiders'
+SPIDER_MODULES = ['scrapper.spiders']
+NEWSPIDER_MODULE = 'scrapper.spiders'
 
 FEED_EXPORT_ENCODING = 'utf-8'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'finances (+http://www.yourdomain.com)'
+#USER_AGENT = 'scrapper (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -47,13 +47,13 @@ COOKIES_ENABLED = False
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'finances.middlewares.FinancesSpiderMiddleware': 543,
+#    'scrapper.middlewares.FinancesSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #DOWNLOADER_MIDDLEWARES = {
-#    'finances.middlewares.FinancesDownloaderMiddleware': 543,
+#    'scrapper.middlewares.FinancesDownloaderMiddleware': 543,
 #}
 
 # Enable or disable extensions
@@ -65,7 +65,7 @@ COOKIES_ENABLED = False
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 #ITEM_PIPELINES = {
-#    'finances.pipelines.FinancesPipeline': 300,
+#    'scrapper.pipelines.FinancesPipeline': 300,
 #}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
