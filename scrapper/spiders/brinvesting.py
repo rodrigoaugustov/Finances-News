@@ -1,8 +1,11 @@
 import scrapy
 import re
+
 from datetime import datetime
-from finances.entities.news import New
-from src.services import create_session
+
+from src.entities.news import New
+from src.services.crud import create_session
+from src.utils.utils import already_exists
 
 
 class InvestingSpider(scrapy.Spider):
@@ -17,13 +20,16 @@ class InvestingSpider(scrapy.Spider):
         for url in urls:
             yield scrapy.Request(url=url, headers=self.headers, callback=self.parse)
 
-    def parse(self, response):
+    def parse(self, response, **kwargs):
         urls = response.xpath('//a[contains(@class, "title")]/@href').getall()
         for link in urls:
             if 'https' not in link:
-                yield response.follow(url=f'{self.base_url}{link}', headers=self.headers, callback=self.parse_article)
+                url = f'{self.base_url}{link}'
+                if not already_exists(url):
+                    yield response.follow(url=url, headers=self.headers, callback=self.parse_article)
 
     def parse_article(self, response):
+        url = response.url
         title = response.xpath('//title/text()').get()
         title = re.sub(r'Por.*', '', title).strip()
         divs = response.css(".WYSIWYG.articlePage")
@@ -34,9 +40,10 @@ class InvestingSpider(scrapy.Spider):
         time = datetime.strptime(time, '%d.%m.%Y %H:%M')
 
         new = New(
-            title = title,
-            content = content,
-            published = time
+            title=title,
+            content=content,
+            url=url,
+            published=time
         )
 
         with create_session() as s:

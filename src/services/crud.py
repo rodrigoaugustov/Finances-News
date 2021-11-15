@@ -1,10 +1,10 @@
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
-from src.services import DATABASE_URI
+from src.services import ENGINE
 
-engine = create_engine(DATABASE_URI)
-Session = sessionmaker(bind=engine)
+
+Session = sessionmaker(bind=ENGINE)
+
 
 @contextmanager
 def create_session():
