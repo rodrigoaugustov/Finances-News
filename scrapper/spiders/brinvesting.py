@@ -15,7 +15,7 @@ class InvestingSpider(scrapy.Spider):
 
     def start_requests(self):
         urls = [
-            'https://br.investing.com/news/stock-market-news',
+            f'https://br.investing.com/news/stock-market-news/{n}' for n in range(1, 10)
         ]
         for url in urls:
             yield scrapy.Request(url=url, headers=self.headers, callback=self.parse)
@@ -32,8 +32,8 @@ class InvestingSpider(scrapy.Spider):
         url = response.url
         title = response.xpath('//title/text()').get()
         title = re.sub(r'Por.*', '', title).strip()
-        divs = response.css(".WYSIWYG.articlePage")
-        content = " ".join([p.get() for p in divs.xpath('.//*/text()')])
+        divs = response.css('.WYSIWYG.articlePage p')
+        content = ' '.join([i.xpath('string()').extract_first() for i in divs])
         time = response.css('.contentSectionDetails span::text').get()
         if "(" in time:
             time = time.split('(')[1].split(')')[0]
@@ -43,7 +43,8 @@ class InvestingSpider(scrapy.Spider):
             title=title,
             content=content,
             url=url,
-            published=time
+            published=time,
+            source=self.name
         )
 
         with create_session() as s:

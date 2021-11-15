@@ -11,7 +11,8 @@ class New(Base):
     content = Column(Text)
     published = Column(DateTime)
     url = Column(String)
+    source = Column(String)
 
     def __repr__(self):
-        return "<News(title='{}', content='{}', url='{}', published={})>" \
-            .format(self.title, self.content, self.url, self.published)
+        return "<News(title='{}', content='{}', url='{}', published={}, source='{}')>" \
+            .format(self.title, self.content, self.url, self.published, self.source)
