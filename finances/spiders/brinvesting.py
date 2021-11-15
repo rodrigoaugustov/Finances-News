@@ -1,6 +1,9 @@
+from finances.entities.news import New
 import scrapy
 import re
 from datetime import datetime
+from finances.entities.news import New
+from finances.services.crud import create_session
 
 
 class InvestingSpider(scrapy.Spider):
@@ -31,8 +34,11 @@ class InvestingSpider(scrapy.Spider):
             time = time.split('(')[1].split(')')[0]
         time = datetime.strptime(time, '%d.%m.%Y %H:%M')
 
-        yield {
-            "title": title,
-            "time": time,
-            "content": content
-        }
+        new = New(
+            title = title,
+            content = content,
+            published = time
+        )
+
+        with create_session() as s:
+            s.add(new)
