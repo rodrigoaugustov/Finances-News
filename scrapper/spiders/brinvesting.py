@@ -1,5 +1,5 @@
 import scrapy
-import re
+import json
 
 from datetime import datetime
 
@@ -30,14 +30,11 @@ class InvestingSpider(scrapy.Spider):
 
     def parse_article(self, response):
         url = response.url
-        title = response.xpath('//title/text()').get()
-        title = re.sub(r'Por.*', '', title).strip()
+        title = response.xpath('//meta[@property="og:description"]/@content').get()
         divs = response.css('.WYSIWYG.articlePage p')
         content = ' '.join([i.xpath('string()').extract_first() for i in divs])
-        time = response.css('.contentSectionDetails span::text').get()
-        if "(" in time:
-            time = time.split('(')[1].split(')')[0]
-        time = datetime.strptime(time, '%d.%m.%Y %H:%M')
+        time = json.loads(response.xpath('//script[@type="application/ld+json"]//text()').get())['dateCreated']
+        time = datetime.strptime(time.split('+')[0], '%Y-%m-%dT%H:%M:%S')
 
         new = New(
             title=title,
