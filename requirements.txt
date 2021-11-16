@@ -3,3 +3,6 @@ apscheduler==3.7.0
 scrapy==2.4.1
 itemadapter==0.3.0
 python-dotenv==0.19.2
+psycopg2==2.8.6
+pymysql==1.0.2
+protego==0.1.16

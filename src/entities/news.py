@@ -7,11 +7,11 @@ Base = declarative_base()
 class New(Base):
     __tablename__ = 'news'
     id = Column(Integer, primary_key=True)
-    title = Column(String)
+    title = Column(Text)
     content = Column(Text)
     published = Column(DateTime)
-    url = Column(String)
-    source = Column(String)
+    url = Column(Text)
+    source = Column(String(50))
 
     def __repr__(self):
         return "<News(title='{}', content='{}', url='{}', published={}, source='{}')>" \
