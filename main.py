@@ -18,6 +18,7 @@ args = parser.parse_args()
 if __name__ == "__main__":
 
     process = CrawlerProcess(get_project_settings())
+    process.crawl('agenciaBrasil')
     process.crawl('brinvesting')
 
     if args.now:
