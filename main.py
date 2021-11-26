@@ -28,7 +28,10 @@ if __name__ == "__main__":
 
         scheduler = AsyncIOScheduler()
         schedule_exp = os.getenv('CRAWL_SCHEDULE', '0 21,03,12 * * *')
-        scheduler.add_job(process.start, CronTrigger.from_crontab(schedule_exp, timezone='America/Sao_Paulo'))
+        scheduler.add_job(
+            process.start,
+            CronTrigger.from_crontab(schedule_exp, timezone='America/Sao_Paulo')
+            )
 
         scheduler.start()
 

@@ -14,5 +14,9 @@ class New(Base):
     source = Column(String(50))
 
     def __repr__(self):
-        return "<News(title='{}', content='{}', url='{}', published={}, source='{}')>" \
-            .format(self.title, self.content, self.url, self.published, self.source)
+        return f"<News(\
+            title='{self.title}', \
+            content='{self.content}', \
+            url='{self.url}', \
+            published={self.published}, \
+            source='{self.source}')>"

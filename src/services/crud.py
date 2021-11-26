@@ -1,5 +1,5 @@
-from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
+from sqlalchemy.orm import sessionmaker
 from src.services import ENGINE
 
 

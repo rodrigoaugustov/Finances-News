@@ -1,12 +1,11 @@
 from src.services.crud import Session
 from src.entities.news import New
 
-
 def already_exists(url):
-    s = Session()
-    if s.query(New).filter(New.url == url).first():
-        s.close()
+    session = Session()
+    if session.query(New).filter(New.url == url).first():
+        session.close()
         return True
     else:
-        s.close()
+        session.close()
         return False

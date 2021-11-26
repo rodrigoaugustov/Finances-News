@@ -1,7 +1,7 @@
-import scrapy
-import re
-
+""" Import Modules """
 from datetime import datetime
+
+import scrapy
 
 from src.entities.news import New
 from src.services.crud import create_session
@@ -9,6 +9,7 @@ from src.utils.utils import already_exists
 
 
 class InvestingSpider(scrapy.Spider):
+    ''' Spider Object '''
     name = 'agenciaBrasil'
     base_url = 'https://agenciabrasil.ebc.com.br'
     headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
@@ -21,6 +22,7 @@ class InvestingSpider(scrapy.Spider):
             yield scrapy.Request(url=url, headers=self.headers, callback=self.parse)
 
     def parse(self, response, **kwargs):
+        ''' Parse selected pages to get all news urls'''
         urls = response.xpath('//div[@class="row my-4 d-flex "]/a/@href').getall()
         for link in urls:
             url = f'{self.base_url}{link}'
@@ -28,6 +30,7 @@ class InvestingSpider(scrapy.Spider):
                 yield response.follow(url=url, headers=self.headers, callback=self.parse_article)
 
     def parse_article(self, response):
+        ''' Parse news page '''
         url = response.url
         title = response.xpath('//meta[@property="og:title"]/@content').get()
         content = response.xpath('string(//div[@class="post-item-wrap"])').extract_first()
@@ -42,5 +45,5 @@ class InvestingSpider(scrapy.Spider):
             source=self.name
         )
 
-        with create_session() as s:
-            s.add(new)
+        with create_session() as session:
+            session.add(new)

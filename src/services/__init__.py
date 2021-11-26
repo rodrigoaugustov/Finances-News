@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from src.entities.news import Base as NewsTable
 from sqlalchemy import create_engine, inspect
+from src.entities.news import Base as NewsTable
 
 load_dotenv()
 
