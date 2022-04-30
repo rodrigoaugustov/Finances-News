@@ -1,49 +1,33 @@
-""" Import Modules """
 from datetime import datetime
 
-import scrapy
-
-from src.entities.news import New
-from src.services.crud import create_session
-from src.utils.utils import already_exists
+from scrapper.scrapper import Scrapper
 
 
-class InvestingSpider(scrapy.Spider):
-    ''' Spider Object '''
-    name = 'agenciaBrasil'
-    base_url = 'https://agenciabrasil.ebc.com.br'
-    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
+class AgenciaBrasil(Scrapper):
+    name = "AgenciaBrasil"
+    root_url = 'https://agenciabrasil.ebc.com.br'
+    source_url = [f'https://agenciabrasil.ebc.com.br/economia?page={n}' for n in range(0, 8)]
 
-    def start_requests(self):
-        urls = [
-            f'https://agenciabrasil.ebc.com.br/economia?page={n}' for n in range(0, 8)
-        ]
-        for url in urls:
-            yield scrapy.Request(url=url, headers=self.headers, callback=self.parse)
+    def __init__(self):
+        super().__init__(self.name, self.root_url, self.source_url)
 
-    def parse(self, response, **kwargs):
-        ''' Parse selected pages to get all news urls'''
+    def get_news(self, response):
+        ''' Parse page to get all news urls'''
+        # must return a list with urls
         urls = response.xpath('//div[@class="row my-4 d-flex "]/a/@href').getall()
-        for link in urls:
-            url = f'{self.base_url}{link}'
-            if not already_exists(url):
-                yield response.follow(url=url, headers=self.headers, callback=self.parse_article)
+        urls = [f'{self.base_url}{link}' for link in urls]
+        return urls
 
-    def parse_article(self, response):
-        ''' Parse news page '''
-        url = response.url
+    def get_title(self, response):
         title = response.xpath('//meta[@property="og:title"]/@content').get()
+        return title
+
+    def get_content(self, response):
         content = response.xpath('string(//div[@class="post-item-wrap"])').extract_first()
+        return content.strip()
+
+    def get_date(self, response):
+        """Must return datetime format"""
         time = response.xpath('//meta[@property="article:published_time"]/@content').get()
-        time = datetime.strptime(time, '%Y-%m-%dT%H:%M:%S-%I:%f')
-
-        new = New(
-            title=title,
-            content=content,
-            url=url,
-            published=time,
-            source=self.name
-        )
-
-        with create_session() as session:
-            session.add(new)
+        pub = datetime.strptime(time, '%Y-%m-%dT%H:%M:%S-%I:%f')
+        return pub

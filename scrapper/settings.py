@@ -14,6 +14,8 @@ NEWSPIDER_MODULE = 'scrapper.spiders'
 
 FEED_EXPORT_ENCODING = 'utf-8'
 
+LOG_LEVEL = 'INFO'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrapper (+http://www.yourdomain.com)'
 

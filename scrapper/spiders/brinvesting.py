@@ -1,58 +1,38 @@
-""" Import Modules """
 import json
+
 from datetime import datetime
 
-import scrapy
-
-from src.entities.news import New
-from src.services.crud import create_session
-from src.utils.utils import already_exists
+from scrapper.scrapper import Scrapper
 
 
-class InvestingSpider(scrapy.Spider):
-    ''' Spider Object '''
-    name = 'brinvesting'
-    base_url = 'https://br.investing.com'
-    headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
+class BrInvesting(Scrapper):
+    name = "BrInvesting"
+    root_url = 'https://br.investing.com'
+    source_url = [f'https://br.investing.com/news/stock-market-news/{n}' for n in range(1, 10)]
 
-    def start_requests(self):
-        urls = [
-            f'https://br.investing.com/news/stock-market-news/{n}' for n in range(1, 10)
-        ]
-        for url in urls:
-            yield scrapy.Request(url=url, headers=self.headers, callback=self.parse)
+    def __init__(self):
+        super().__init__(self.name, self.root_url, self.source_url)
 
-    def parse(self, response, **kwargs):
-        ''' Parse selected pages to get all news urls'''
+    def get_news(self, response):
+        ''' Parse page to get all news urls'''
+        # must return a list with urls
         urls = response.xpath('//a[contains(@class, "title")]/@href').getall()
-        for link in urls:
-            if 'https' not in link:
-                url = f'{self.base_url}{link}'
-                if not already_exists(url):
-                    yield response.follow(
-                        url=url,
-                        headers=self.headers,
-                        callback=self.parse_article
-                        )
+        urls = [f'{self.base_url}{link}' if 'https' not in link else link for link in urls]
+        return urls
 
-    def parse_article(self, response):
-        ''' Parse news page '''
-        url = response.url
+    def get_title(self, response):
         title = response.xpath('//meta[@property="og:description"]/@content').get()
+        return title
+
+    def get_content(self, response):
         divs = response.css('.WYSIWYG.articlePage p')
         content = ' '.join([i.xpath('string()').extract_first() for i in divs])
+        return content.strip()
+
+    def get_date(self, response):
+        """Must return datetime format"""
         time = json.loads(response.xpath(
             '//script[@type="application/ld+json"]//text()'
-            ).get())['dateCreated']
-        time = datetime.strptime(time.split('+')[0], '%Y-%m-%dT%H:%M:%S')
-
-        new = New(
-            title=title,
-            content=content,
-            url=url,
-            published=time,
-            source=self.name
-        )
-
-        with create_session() as session:
-            session.add(new)
+        ).get())['dateCreated']
+        pub = datetime.strptime(time.split('+')[0], '%Y-%m-%dT%H:%M:%S')
+        return pub

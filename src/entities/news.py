@@ -10,6 +10,7 @@ class New(Base):
     title = Column(Text)
     content = Column(Text)
     published = Column(DateTime)
+    created = Column(DateTime)
     url = Column(Text)
     source = Column(String(50))
 
@@ -19,4 +20,5 @@ class New(Base):
             content='{self.content}', \
             url='{self.url}', \
             published={self.published}, \
+            created={self.created}, \
             source='{self.source}')>"
